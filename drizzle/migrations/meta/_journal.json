@@ -1,0 +1,76 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791927525468,
+      "tag": "0000_tclean_business_and_requests",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791927663523,
+      "tag": "0001_tclean_storage_and_public_slots",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791988793477,
+      "tag": "0002_discounts_reviews_payments",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791991082094,
+      "tag": "0003_booking_calendar_conflict_intervals",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791991744274,
+      "tag": "0004_open_availability_period",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791991877405,
+      "tag": "0005_idempotent_availability_period",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791993473264,
+      "tag": "0006_client_portal",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792083186443,
+      "tag": "0007_bot_messages",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792084290240,
+      "tag": "0008_client_hidden_messages",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792161180000,
+      "tag": "0011_messenger_read_receipts",
+      "breakpoints": true
+    }
+  ]
+}
