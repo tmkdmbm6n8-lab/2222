@@ -18,7 +18,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+
 import { ACCOUNT_DISCOUNT, PROFILE_DISCOUNT } from "@/lib/discounts";
 import { getClientData, getMediaUrl, saveProfile, sendClientMessage, profileComplete } from "@/lib/business.functions";
 import { PageHeading } from "./shared";
@@ -437,10 +437,18 @@ export function AccountPage() {
               variant="outline"
               className="w-full mt-4"
               onClick={async () => {
-                const r = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: `${window.location.origin}/compte`,
-                });
-                if (r.error) setMsg("Connexion Google indisponible.");
+                setMsg("");
+                try {
+                  const { error } = await supabase.auth.signInWithOAuth({
+                    provider: "google",
+                    options: {
+                      redirectTo: `${window.location.origin}/compte`,
+                    },
+                  });
+                  if (error) setMsg(`Connexion Google impossible : ${error.message}`);
+                } catch (error) {
+                  setMsg(error instanceof Error ? error.message : "Connexion Google indisponible.");
+                }
               }}
             >
               Continuer avec Google
