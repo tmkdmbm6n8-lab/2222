@@ -12,7 +12,7 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart({
       server: {
-        entry: "./server.ts",
+        entry: "server",
       },
     }),
     viteReact(),
