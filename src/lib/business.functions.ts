@@ -44,9 +44,17 @@ export const publishIntervention = createServerFn({ method: 'POST' })
     return updated;
   });
 
-export const getBusiness = createServerFn({ method: "GET" }).handler(async () => {
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-  const client = createClient<Database>(process.env["SUPABASE_URL"]!, key, {
+function createPublicSupabaseClient() {
+  const url = process.env["SUPABASE_URL"];
+  const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
+  if (!url || !key) {
+    console.error("[TClean/Supabase] Variables serveur manquantes:", {
+      SUPABASE_URL: Boolean(url),
+      SUPABASE_PUBLISHABLE_KEY: Boolean(key),
+    });
+    return null;
+  }
+  return createClient<Database>(url, key, {
     auth: { persistSession: false },
     global: {
       fetch: (input, init) => {
@@ -57,26 +65,28 @@ export const getBusiness = createServerFn({ method: "GET" }).handler(async () =>
       },
     },
   });
+}
+
+export const getBusiness = createServerFn({ method: "GET" }).handler(async () => {
+  const client = createPublicSupabaseClient();
+  if (!client) return defaultConfig;
   const { data, error } = await client.from("business_settings").select("config").eq("id", "main").maybeSingle();
-  if (error) throw new Error("Les informations TClean sont temporairement indisponibles.");
-  return data?.config ?? null;
+  if (error) {
+    // Keep public pages available while the database is being configured, and log the real cause in Railway.
+    console.error("[TClean/Supabase] Lecture de business_settings impossible:", error.code, error.message, error.details, error.hint);
+    return defaultConfig;
+  }
+  return data?.config ?? defaultConfig;
 });
 
 export const getSlots = createServerFn({ method: "GET" }).handler(async () => {
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-  const client = createClient<Database>(process.env["SUPABASE_URL"]!, key, {
-    auth: { persistSession: false },
-    global: {
-      fetch: (input, init) => {
-        const h = new Headers(init?.headers);
-        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) h.delete("Authorization");
-        h.set("apikey", key);
-        return fetch(input, { ...init, headers: h });
-      },
-    },
-  });
+  const client = createPublicSupabaseClient();
+  if (!client) return [];
   const { data, error } = await client.rpc("list_booking_slots");
-  if (error) throw new Error("Les disponibilités ne sont pas accessibles.");
+  if (error) {
+    console.error("[TClean/Supabase] Lecture des disponibilités impossible:", error.code, error.message, error.details, error.hint);
+    return [];
+  }
   return data ?? [];
 });
 
